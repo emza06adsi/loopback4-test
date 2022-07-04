@@ -1,13 +1,28 @@
 import {inject} from '@loopback/core';
-import {genSalt, hash} from 'bcryptjs';
+import {compare, genSalt, hash} from 'bcryptjs';
+import {cpuUsage} from 'process';
 
 interface PasswordHasher<T = string> {
   hashPassword(Password: T): Promise<T>
+  comparePassword(providedPass: T, storedPass: T): Promise<Boolean>
 }
 
 export class BcryptHasher implements PasswordHasher<string>{
+
+  async comparePassword(
+    providedPass: string,
+    storedPass: string,
+  ): Promise<Boolean> {
+
+    const passwordMatched = await compare(
+      providedPass,
+      storedPass);
+
+    return passwordMatched;
+
+  }
   @inject('rounds')
-  
+
   public readonly rounds: number;
 
   async hashPassword(Password: string) {

@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import {AppUserTb} from '../models';
 import {AppUserTbRepository, Credentials} from '../repositories';
 import {BcryptHasher} from '../services/hash.password.bcrypt';
+import {MyUserService} from '../services/user-service';
 import {validateCredentials} from '../services/validator';
 // import {inject} from '@loopback/core';
 
@@ -15,7 +16,9 @@ export class AppUserTbController {
   constructor(
     @repository(AppUserTbRepository)
     public appUserTbRepository: AppUserTbRepository,
-    @inject('service.hasher') public hasher: BcryptHasher,
+    @inject('service.hasher')
+    public hasher: BcryptHasher,
+    @inject('services.user.service') public userService: MyUserService
   ) { }
 
   @post('/signup', {
@@ -84,6 +87,12 @@ export class AppUserTbController {
 
     }
   }) credentials: Credentials): Promise<{token: string}> {
+    //make sure user exit, password should be valid
+    const user = await this.userService.verifyCredentials(credentials)
+    console.log(user)
+    const UserProfile = await this.userService.convertToUserProfile(user);
+    console.log(UserProfile)
+    // generate a jwt web token
     return Promise.resolve({token: '4654685324asdsadsadsad00'});
   }
 
