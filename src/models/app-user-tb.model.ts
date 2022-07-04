@@ -47,9 +47,9 @@ export class AppUserTb extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    // required: true,
   })
-  Password: string;
+  Password?: string;
 
   @property({
     type: 'string',
@@ -66,7 +66,7 @@ export class AppUserTb extends Entity {
   @property({
     type: 'string',
   })
-  VerificationToken?: string;
+  verificationToken?: string;
 
 
   constructor(data?: Partial<AppUserTb>) {
