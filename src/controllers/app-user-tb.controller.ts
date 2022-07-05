@@ -4,6 +4,7 @@ import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {getJsonSchemaRef, post, requestBody} from '@loopback/rest';
 import * as _ from 'lodash';
+import {PasswordHasherBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
 import {AppUserTb} from '../models';
 import {AppUserTbRepository, Credentials} from '../repositories';
 import {BcryptHasher} from '../services/hash.password.bcrypt';
@@ -17,10 +18,12 @@ export class AppUserTbController {
   constructor(
     @repository(AppUserTbRepository)
     public appUserTbRepository: AppUserTbRepository,
-    @inject('service.hasher')
+    @inject(PasswordHasherBindings.PASSWORD_HASHER)
     public hasher: BcryptHasher,
-    @inject('services.user.service') public userService: MyUserService,
-    @inject('services.jwt.service') public jweService: JWTService
+    @inject(UserServiceBindings.USER_SERVICE)
+    public userService: MyUserService,
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
+    public jweService: JWTService
 
   ) { }
 

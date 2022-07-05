@@ -1,6 +1,8 @@
 import {inject} from '@loopback/core';
 import {HttpErrors, SessionUserProfile} from '@loopback/rest';
+import {UserProfile} from '@loopback/security';
 import jwt from 'jsonwebtoken';
+import {TokenServiceBindings} from '../keys';
 // const jwt = require('jsonwebtoken');
 // const jwt = require('jsonwebtoken');
 
@@ -21,9 +23,9 @@ export const encodeJWT = (
 
 
 export class JWTService {
-  @inject('authentication.jwt.secret')
+  @inject(TokenServiceBindings.TOKEN_SECRET)
   public readonly jwtSecret: string
-  @inject('authentication.jwt.expiresIn')
+  @inject(TokenServiceBindings.TOKEN_EXPIRES_IN)
   public readonly expiresIn: string
 
   async generateToken(appUserData: SessionUserProfile): Promise<String> {
@@ -45,5 +47,15 @@ export class JWTService {
 
     return token
   }
+
+  async verifyToken(token: string): Promise<UserProfile | any> {
+    return Promise.resolve(
+      {
+        name: 'Haieder',
+        id: 1
+      }
+    )
+  };
+
 }
 

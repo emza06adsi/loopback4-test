@@ -1,8 +1,9 @@
 import {inject} from '@loopback/core';
 import {compare, genSalt, hash} from 'bcryptjs';
 import {cpuUsage} from 'process';
+import {PasswordHasherBindings} from '../keys';
 
-interface PasswordHasher<T = string> {
+export interface PasswordHasher<T = string> {
   hashPassword(Password: T): Promise<T>
   comparePassword(providedPass: T, storedPass: T): Promise<Boolean>
 }
@@ -21,7 +22,7 @@ export class BcryptHasher implements PasswordHasher<string>{
     return passwordMatched;
 
   }
-  @inject('rounds')
+  @inject(PasswordHasherBindings.ROUNDS)
 
   public readonly rounds: number;
 
