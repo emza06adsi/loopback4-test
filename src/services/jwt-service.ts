@@ -6,21 +6,44 @@ import {TokenServiceBindings} from '../keys';
 // const jwt = require('jsonwebtoken');
 // const jwt = require('jsonwebtoken');
 
-// const singAsync = promisify(jwt.sign)
+// const verifyAsync = promisify(jwt.verify)
+
+
 
 export const encodeJWT = (
   payload: string | object | Buffer,
   jwtSecret: string,
   expiresIn: string
 ): Promise<unknown> => {
-  return new Promise((resolve, reject) => {
-    jwt.sign(payload, jwtSecret, {expiresIn: expiresIn}, (err, token) => {
-      if (err) return reject(err);
-      else return resolve(token);
-    });
-  });
+  return new Promise(
+    (resolve, reject) => {
+      jwt.sign(
+        payload,
+        jwtSecret,
+        {expiresIn: expiresIn},
+        (err, token) => {
+          if (err) return reject(err);
+          else return resolve(token);
+        }
+      );
+    }
+  );
 }
 
+export const verifyAsync = (
+  token: string,
+  jwtSecret: string,
+): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(
+      token,
+      jwtSecret,
+      (err, token) => {
+        if (err) return reject(err);
+        else return resolve(token);
+      })
+  })
+}
 
 export class JWTService {
   @inject(TokenServiceBindings.TOKEN_SECRET)
@@ -31,7 +54,9 @@ export class JWTService {
   async generateToken(appUserData: SessionUserProfile): Promise<String> {
 
     if (!appUserData) {
-      throw new HttpErrors.Unauthorized('Error while Generating token : appUserData is null')
+      throw new HttpErrors.Unauthorized(
+        'Error while Generating token : appUserData is null'
+      )
     }
 
     let token: any = '';
@@ -49,12 +74,30 @@ export class JWTService {
   }
 
   async verifyToken(token: string): Promise<UserProfile | any> {
-    return Promise.resolve(
-      {
-        name: 'Haieder',
-        id: 1
-      }
-    )
+
+    if (!token) {
+      throw new HttpErrors.Unauthorized(
+        `Error verifying token : 'token' is null`,
+      )
+    }
+
+    let UserProfile: UserProfile | any;
+
+    try {
+      // decode user profile from token
+      const {id = "", name = ""} =
+        await verifyAsync(token, this.jwtSecret);
+      // don´t copy over token field 'iat' and 'exp', nor  'Email' to user Profile
+      UserProfile = Object.assign(
+        {id, name}
+      );
+
+    } catch (error) {
+      throw new HttpErrors.Unauthorized(`Error verifying token : ${error.message}`)
+    }
+
+    return UserProfile;
+
   };
 
 }

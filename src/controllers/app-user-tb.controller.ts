@@ -1,8 +1,10 @@
 // Uncomment these imports to begin using these cool features!
 
+import {authenticate, AuthenticateActionProvider, AuthenticationBindings} from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {getJsonSchemaRef, post, requestBody} from '@loopback/rest';
+import {get, getJsonSchemaRef, post, requestBody} from '@loopback/rest';
+import {UserProfile} from '@loopback/security';
 import * as _ from 'lodash';
 import {PasswordHasherBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
 import {AppUserTb} from '../models';
@@ -101,6 +103,15 @@ export class AppUserTbController {
     // generate a jwt web token
     const token = await this.jweService.generateToken(UserProfile);
     return Promise.resolve({token});
+  }
+
+  @get('/user/me')
+  @authenticate('jwt')
+  async me(@inject(
+    AuthenticationBindings.CURRENT_USER
+  ) currentUser: UserProfile,
+  ): Promise<UserProfile | any> {
+    return Promise.resolve(currentUser)
   }
 
 }

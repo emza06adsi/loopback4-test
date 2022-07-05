@@ -1,3 +1,4 @@
+import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
 import {RepositoryMixin} from '@loopback/repository';
@@ -8,6 +9,7 @@ import {
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
+import {JWTStrategy} from './authentication-strategies/jwt-strategy';
 import {PasswordHasherBindings, TokenServiceBindings, TokenServiceConstants, UserServiceBindings} from './keys';
 import {MySequence} from './sequence';
 import {BcryptHasher} from './services/hash.password.bcrypt';
@@ -24,6 +26,9 @@ export class LoopbackTestApplication extends BootMixin(
 
     // set up bindings
     this.setupBinding();
+
+    this.component(AuthenticationComponent);
+    registerAuthenticationStrategy(this, JWTStrategy)
 
     // Set up the custom sequence
     this.sequence(MySequence);
@@ -53,7 +58,7 @@ export class LoopbackTestApplication extends BootMixin(
       BcryptHasher
     );
     this.bind(PasswordHasherBindings.ROUNDS).to(10);
-     this.bind(UserServiceBindings.USER_SERVICE).toClass(
+    this.bind(UserServiceBindings.USER_SERVICE).toClass(
       MyUserService
     );
     this.bind(TokenServiceBindings.TOKEN_SERVICE).toClass(
