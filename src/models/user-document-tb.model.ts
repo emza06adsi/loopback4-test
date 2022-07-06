@@ -1,5 +1,6 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {TypeDocumentTb} from './type-document-tb.model';
+import {AppUserTb} from './app-user-tb.model';
 
 @model()
 export class UserDocumentTb extends Entity {
@@ -30,6 +31,9 @@ export class UserDocumentTb extends Entity {
 
   @belongsTo(() => TypeDocumentTb)
   typeDocumentTbId: number;
+
+  @belongsTo(() => AppUserTb)
+  appUserTbId: number;
 
   constructor(data?: Partial<UserDocumentTb>) {
     super(data);

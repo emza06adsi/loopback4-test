@@ -1,5 +1,6 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {CountryTb} from './country-tb.model';
+import {AppUserTb} from './app-user-tb.model';
 
 @model()
 export class ContactInfoTb extends Entity {
@@ -45,6 +46,9 @@ export class ContactInfoTb extends Entity {
 
   @belongsTo(() => CountryTb)
   countryTbId: number;
+
+  @belongsTo(() => AppUserTb)
+  appUserTbId: number;
 
   constructor(data?: Partial<ContactInfoTb>) {
     super(data);
