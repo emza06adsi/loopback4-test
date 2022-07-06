@@ -1,4 +1,5 @@
 import {Entity, model, property} from '@loopback/repository';
+import {Permission} from '@loopback/security';
 
 @model()
 export class AppUserTb extends Entity {
@@ -68,11 +69,15 @@ export class AppUserTb extends Entity {
   })
   verificationToken?: string;
 
+  @property.array(String)
+  permissions: String[];
+
 
   constructor(data?: Partial<AppUserTb>) {
     super(data);
   }
 }
+
 
 export interface AppUserTbRelations {
   // describe navigational properties here

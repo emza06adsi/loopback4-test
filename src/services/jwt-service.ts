@@ -67,7 +67,8 @@ export class JWTService {
         this.expiresIn
       );
     } catch (error) {
-      throw new HttpErrors.Unauthorized(`error generating token ${error}`)
+      throw new HttpErrors.Unauthorized(
+        `error generating token ${error}`)
     }
 
     return token

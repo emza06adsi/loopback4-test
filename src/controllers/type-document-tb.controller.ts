@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -17,27 +18,41 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import {PermissionKeys} from '../authorization/permission-keys';
 import {TypeDocumentTb} from '../models';
 import {TypeDocumentTbRepository} from '../repositories';
 
 export class TypeDocumentTbController {
   constructor(
     @repository(TypeDocumentTbRepository)
-    public typeDocumentTbRepository : TypeDocumentTbRepository,
-  ) {}
+    public typeDocumentTbRepository: TypeDocumentTbRepository,
+  ) { }
 
   @post('/type-document-tb')
   @response(200, {
     description: 'TypeDocumentTb model instance',
     content: {'application/json': {schema: getModelSchemaRef(TypeDocumentTb)}},
   })
+
+  //admin should be authentication
+  //only admin can access this route
+  //please run x and y function
+  // @authenticate('jwt',()=>{})
+  @authenticate({
+    strategy: 'jwt',
+    options: [
+      PermissionKeys.CreateTypeDocument,
+      PermissionKeys.UpdateTypeDocument,
+      PermissionKeys.UpdateTypeDocument]
+  })
+  // @AuthenticationComponent('jwt',)
   async create(
     @requestBody({
       content: {
         'application/json': {
           schema: getModelSchemaRef(TypeDocumentTb, {
             title: 'NewTypeDocumentTb',
-            
+
           }),
         },
       },
@@ -81,6 +96,10 @@ export class TypeDocumentTbController {
     description: 'TypeDocumentTb PATCH success count',
     content: {'application/json': {schema: CountSchema}},
   })
+
+  //admin should be authentication
+  //only admin can access this route
+
   async updateAll(
     @requestBody({
       content: {
@@ -115,6 +134,11 @@ export class TypeDocumentTbController {
   @response(204, {
     description: 'TypeDocumentTb PATCH success',
   })
+
+  //admin should be authentication
+  //only admin can access this route
+
+
   async updateById(
     @param.path.number('id') id: number,
     @requestBody({
@@ -140,10 +164,14 @@ export class TypeDocumentTbController {
     await this.typeDocumentTbRepository.replaceById(id, typeDocumentTb);
   }
 
+  //admin should be authentication
+  //only admin can access this route
+
   @del('/type-document-tb/{id}')
   @response(204, {
     description: 'TypeDocumentTb DELETE success',
   })
+
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.typeDocumentTbRepository.deleteById(id);
   }

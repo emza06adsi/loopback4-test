@@ -6,6 +6,7 @@ import {repository} from '@loopback/repository';
 import {get, getJsonSchemaRef, post, requestBody} from '@loopback/rest';
 import {UserProfile} from '@loopback/security';
 import * as _ from 'lodash';
+import {PermissionKeys} from '../authorization/permission-keys';
 import {PasswordHasherBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
 import {AppUserTb} from '../models';
 import {AppUserTbRepository, Credentials} from '../repositories';
@@ -43,12 +44,13 @@ export class AppUserTbController {
   async signup(@requestBody() appUserData: AppUserTb) {
     const {Email, Password = ""} = appUserData;
     validateCredentials(_.pick({Email, Password}, ['Email', 'Password']));
-
-    appUserData.Password = await this.hasher.hashPassword(Password)
+    appUserData.permissions = [PermissionKeys.AccessAuthFeature];
+    appUserData.Password = await this.hasher.hashPassword(Password);
     const savedAppUserTb = await this.appUserTbRepository.create(appUserData)
     delete savedAppUserTb.Password;
     return savedAppUserTb;
   };
+
   @post('app-user/login', {
     responses: {
       '200': {

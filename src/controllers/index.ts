@@ -7,3 +7,4 @@ export * from './user-document-tb-type-document-tb.controller';
 export * from './user-document-tb.controller';
 
 export * from './app-user-tb.controller';
+export * from './admin.controller';
