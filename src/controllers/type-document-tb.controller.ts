@@ -5,18 +5,12 @@ import {
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
 import {PermissionKeys} from '../authorization/permission-keys';
 import {TypeDocumentTb} from '../models';
@@ -97,6 +91,13 @@ export class TypeDocumentTbController {
     content: {'application/json': {schema: CountSchema}},
   })
 
+  @authenticate({
+    strategy: 'jwt',
+    options: [
+      PermissionKeys.CreateTypeDocument,
+      PermissionKeys.UpdateTypeDocument,
+      PermissionKeys.UpdateTypeDocument]
+  })
   //admin should be authentication
   //only admin can access this route
 
@@ -137,7 +138,13 @@ export class TypeDocumentTbController {
 
   //admin should be authentication
   //only admin can access this route
-
+  @authenticate({
+    strategy: 'jwt',
+    options: [
+      PermissionKeys.CreateTypeDocument,
+      PermissionKeys.UpdateTypeDocument,
+      PermissionKeys.UpdateTypeDocument]
+  })
 
   async updateById(
     @param.path.number('id') id: number,
@@ -171,7 +178,13 @@ export class TypeDocumentTbController {
   @response(204, {
     description: 'TypeDocumentTb DELETE success',
   })
-
+  @authenticate({
+    strategy: 'jwt',
+    options: [
+      PermissionKeys.CreateTypeDocument,
+      PermissionKeys.UpdateTypeDocument,
+      PermissionKeys.UpdateTypeDocument]
+  })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.typeDocumentTbRepository.deleteById(id);
   }

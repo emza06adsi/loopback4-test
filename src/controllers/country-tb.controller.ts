@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -17,19 +18,27 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import {PermissionKeys} from '../authorization/permission-keys';
 import {CountryTb} from '../models';
 import {CountryTbRepository} from '../repositories';
 
 export class CountryTbController {
   constructor(
     @repository(CountryTbRepository)
-    public countryTbRepository : CountryTbRepository,
-  ) {}
+    public countryTbRepository: CountryTbRepository,
+  ) { }
 
   @post('/country-tb')
   @response(200, {
     description: 'CountryTb model instance',
     content: {'application/json': {schema: getModelSchemaRef(CountryTb)}},
+  })
+  @authenticate({
+    strategy: 'jwt',
+    options: [
+      PermissionKeys.CreateTypeDocument,
+      PermissionKeys.UpdateTypeDocument,
+      PermissionKeys.UpdateTypeDocument]
   })
   async create(
     @requestBody({
@@ -37,7 +46,7 @@ export class CountryTbController {
         'application/json': {
           schema: getModelSchemaRef(CountryTb, {
             title: 'NewCountryTb',
-            
+
           }),
         },
       },
@@ -81,6 +90,14 @@ export class CountryTbController {
     description: 'CountryTb PATCH success count',
     content: {'application/json': {schema: CountSchema}},
   })
+
+  @authenticate({
+    strategy: 'jwt',
+    options: [
+      PermissionKeys.CreateTypeDocument,
+      PermissionKeys.UpdateTypeDocument,
+      PermissionKeys.UpdateTypeDocument]
+  })
   async updateAll(
     @requestBody({
       content: {
@@ -115,6 +132,14 @@ export class CountryTbController {
   @response(204, {
     description: 'CountryTb PATCH success',
   })
+
+  @authenticate({
+    strategy: 'jwt',
+    options: [
+      PermissionKeys.CreateTypeDocument,
+      PermissionKeys.UpdateTypeDocument,
+      PermissionKeys.UpdateTypeDocument]
+  })
   async updateById(
     @param.path.number('id') id: number,
     @requestBody({
@@ -143,6 +168,13 @@ export class CountryTbController {
   @del('/country-tb/{id}')
   @response(204, {
     description: 'CountryTb DELETE success',
+  })
+  @authenticate({
+    strategy: 'jwt',
+    options: [
+      PermissionKeys.CreateTypeDocument,
+      PermissionKeys.UpdateTypeDocument,
+      PermissionKeys.UpdateTypeDocument]
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.countryTbRepository.deleteById(id);
